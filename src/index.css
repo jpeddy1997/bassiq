@@ -8,3 +8,38 @@ body {
 #root {
   min-height: 100svh;
 }
+
+/* Animated water shimmer on hero card */
+@keyframes waterShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.water-shimmer {
+  background: linear-gradient(
+    120deg,
+    rgba(0, 212, 170, 0) 0%,
+    rgba(0, 212, 170, 0.04) 25%,
+    rgba(0, 212, 170, 0.08) 50%,
+    rgba(0, 212, 170, 0.04) 75%,
+    rgba(0, 212, 170, 0) 100%
+  );
+  background-size: 200% 200%;
+  animation: waterShimmer 6s ease-in-out infinite;
+}
+
+/* Subtle wave animation */
+@keyframes waveFloat {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-8px); }
+}
+
+.wave-animate {
+  animation: waveFloat 4s ease-in-out infinite;
+}
+
+.wave-animate-slow {
+  animation: waveFloat 6s ease-in-out infinite;
+  animation-delay: -1.5s;
+}

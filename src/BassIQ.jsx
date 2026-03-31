@@ -47,6 +47,104 @@ function getTierConfig(score) {
   return { label: "POOR", color: COLORS.poor, emoji: "🔴", desc: "Tough bite, finesse or stay home" };
 }
 
+// ─── INLINE SVG ILLUSTRATIONS ────────────────────────────────────────────────
+
+function BassSilhouette({ width = 48, height = 28, color = COLORS.accent, opacity = 0.7, className = "" }) {
+  return (
+    <svg width={width} height={height} viewBox="0 0 120 70" fill="none" className={className} style={{ opacity }}>
+      <path
+        d="M8 38c4-12 16-24 32-30 8-3 18-4 28-2 12 3 22 10 30 18 4 4 8 6 14 6 3 0 6 1 6 3s-3 3-6 3c-4 0-7-1-10-3-2 4-6 8-12 12-8 5-18 8-28 9-14 1-28-2-38-8C16 42 10 40 8 38z"
+        fill={color}
+      />
+      <path
+        d="M72 28c-2-1-3-3-2-5s3-3 5-2c1 0 2 1 2 2"
+        fill={COLORS.base}
+        opacity="0.6"
+      />
+      <path
+        d="M90 30c3-2 7-5 12-5M90 32c4 0 9 2 14 6"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        opacity="0.5"
+      />
+    </svg>
+  );
+}
+
+function WavePattern({ color = COLORS.accent, opacity = 0.08, className = "" }) {
+  return (
+    <svg width="100%" height="32" viewBox="0 0 400 32" preserveAspectRatio="none" className={className} style={{ opacity }}>
+      <path
+        d="M0 20 Q25 8 50 20 T100 20 T150 20 T200 20 T250 20 T300 20 T350 20 T400 20 V32 H0Z"
+        fill={color}
+      />
+      <path
+        d="M0 24 Q30 14 60 24 T120 24 T180 24 T240 24 T300 24 T360 24 T400 24 V32 H0Z"
+        fill={color}
+        opacity="0.6"
+      />
+    </svg>
+  );
+}
+
+function WaterRipples({ className = "" }) {
+  return (
+    <svg width="100%" height="100%" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" className={className}>
+      <defs>
+        <radialGradient id="ripple1" cx="30%" cy="40%">
+          <stop offset="0%" stopColor={COLORS.accent} stopOpacity="0.06" />
+          <stop offset="60%" stopColor={COLORS.accent} stopOpacity="0.02" />
+          <stop offset="100%" stopColor={COLORS.accent} stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="ripple2" cx="70%" cy="60%">
+          <stop offset="0%" stopColor={COLORS.accent} stopOpacity="0.04" />
+          <stop offset="50%" stopColor={COLORS.accent} stopOpacity="0.02" />
+          <stop offset="100%" stopColor={COLORS.accent} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {/* Concentric ripple rings */}
+      <circle cx="120" cy="80" r="30" fill="none" stroke={COLORS.accent} strokeWidth="0.5" opacity="0.12" />
+      <circle cx="120" cy="80" r="55" fill="none" stroke={COLORS.accent} strokeWidth="0.5" opacity="0.08" />
+      <circle cx="120" cy="80" r="80" fill="none" stroke={COLORS.accent} strokeWidth="0.5" opacity="0.04" />
+      <circle cx="300" cy="120" r="25" fill="none" stroke={COLORS.accent} strokeWidth="0.5" opacity="0.10" />
+      <circle cx="300" cy="120" r="50" fill="none" stroke={COLORS.accent} strokeWidth="0.5" opacity="0.06" />
+      <circle cx="300" cy="120" r="75" fill="none" stroke={COLORS.accent} strokeWidth="0.5" opacity="0.03" />
+      <rect width="100%" height="100%" fill="url(#ripple1)" />
+      <rect width="100%" height="100%" fill="url(#ripple2)" />
+    </svg>
+  );
+}
+
+function TopographyLines({ className = "" }) {
+  return (
+    <svg width="100%" height="100%" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" className={className} style={{ opacity: 0.04 }}>
+      <path d="M-20 80 Q80 40 180 80 T380 80" fill="none" stroke={COLORS.accent} strokeWidth="1" />
+      <path d="M-20 120 Q100 70 200 120 T420 120" fill="none" stroke={COLORS.accent} strokeWidth="1" />
+      <path d="M-20 160 Q60 120 160 160 T380 160" fill="none" stroke={COLORS.accent} strokeWidth="1" />
+      <path d="M-20 200 Q120 150 220 200 T420 200" fill="none" stroke={COLORS.accent} strokeWidth="1" />
+      <path d="M-20 240 Q80 200 180 240 T380 240" fill="none" stroke={COLORS.accent} strokeWidth="1" />
+    </svg>
+  );
+}
+
+// Reusable card wrapper with subtle wave bottom
+function FishCard({ children, className = "", style = {}, showWaves = true }) {
+  return (
+    <div
+      className={`rounded-2xl relative overflow-hidden mb-4 ${className}`}
+      style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, ...style }}
+    >
+      {children}
+      {showWaves && (
+        <div className="absolute bottom-0 left-0 right-0 pointer-events-none wave-animate">
+          <WavePattern />
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── ASTRONOMICAL UTILITIES ──────────────────────────────────────────────────
 
 const DEG2RAD = Math.PI / 180;
@@ -753,12 +851,22 @@ function LocationSearch({ onSelect }) {
   };
 
   return (
-    <div className="min-h-screen p-4" style={{ background: COLORS.base }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: COLORS.base }}>
+      {/* Background water texture */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0" style={{
+          background: `radial-gradient(ellipse at 50% 0%, rgba(0,212,170,0.06) 0%, transparent 60%),
+                       radial-gradient(ellipse at 80% 100%, rgba(0,100,120,0.05) 0%, transparent 50%)`
+        }} />
+        <TopographyLines />
+      </div>
+      <div className="relative z-10 p-4">
       <div className="w-full max-w-md mx-auto">
-        <div className="flex items-center gap-2 mb-6">
-          <Fish size={24} color={COLORS.accent} />
-          <h1 className="text-xl font-bold" style={{ color: COLORS.textPrimary }}>BassIQ</h1>
+        <div className="flex items-center gap-3 mb-2 pt-6">
+          <BassSilhouette width={56} height={32} opacity={0.9} />
+          <h1 className="text-2xl font-bold" style={{ color: COLORS.textPrimary }}>BassIQ</h1>
         </div>
+        <p className="text-sm mb-6" style={{ color: COLORS.textSecondary }}>Know when the bass are biting</p>
 
         <div className="flex gap-2 mb-3">
           <div className="relative flex-1">
@@ -824,6 +932,7 @@ function LocationSearch({ onSelect }) {
             </button>
           ))}
         </div>
+      </div>
       </div>
     </div>
   );
@@ -1041,12 +1150,22 @@ export default function BassIQ() {
 
   // Dashboard
   return (
-    <div className="min-h-screen pb-8" style={{ background: COLORS.base }}>
-      <div className="max-w-md mx-auto px-4">
+    <div className="min-h-screen pb-8 relative overflow-hidden" style={{ background: COLORS.base }}>
+      {/* Full-page water gradient background */}
+      <div className="fixed inset-0 pointer-events-none" style={{
+        background: `radial-gradient(ellipse at 30% 10%, rgba(0,212,170,0.07) 0%, transparent 50%),
+                     radial-gradient(ellipse at 80% 30%, rgba(0,80,120,0.06) 0%, transparent 40%),
+                     radial-gradient(ellipse at 50% 90%, rgba(0,150,130,0.04) 0%, transparent 50%)`
+      }} />
+      <div className="fixed inset-0 pointer-events-none">
+        <TopographyLines />
+      </div>
+
+      <div className="relative z-10 max-w-md mx-auto px-4">
         {/* Header */}
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center gap-2">
-            <Fish size={20} color={COLORS.accent} />
+            <BassSilhouette width={40} height={24} opacity={0.85} />
             <span className="text-lg font-bold" style={{ color: COLORS.textPrimary }}>BassIQ</span>
           </div>
           <div className="flex items-center gap-2">
@@ -1106,191 +1225,208 @@ export default function BassIQ() {
               className="rounded-2xl p-6 mb-4 text-center relative overflow-hidden"
               style={{ background: COLORS.card, border: `1px solid ${COLORS.border}` }}
             >
-              <div className="relative inline-block">
-                <ScoreGauge score={currentScore.totalScore} />
+              {/* Water ripple texture behind score */}
+              <div className="absolute inset-0 pointer-events-none">
+                <WaterRipples />
               </div>
-              <div className="mt-2 text-sm font-medium" style={{ color: currentScore.tier.color }}>
-                {currentScore.tier.emoji} {currentScore.tier.label} — {currentScore.tier.desc}
+              <div className="absolute inset-0 pointer-events-none water-shimmer" />
+
+              {/* Faint bass silhouette watermark */}
+              <div className="absolute top-3 right-3 pointer-events-none">
+                <BassSilhouette width={72} height={42} opacity={0.06} color={COLORS.textPrimary} />
               </div>
 
-              {/* Condition pills */}
-              <div className="flex flex-wrap justify-center gap-2 mt-4">
-                <span className="rounded-full px-3 py-1 text-xs" style={{ background: COLORS.elevated, color: COLORS.textSecondary }}>
-                  🌡 {Math.round(currentWeather.main.temp)}°F
-                </span>
-                <span className="rounded-full px-3 py-1 text-xs" style={{ background: COLORS.elevated, color: COLORS.textSecondary }}>
-                  💨 {Math.round(currentWeather.wind.speed)} mph {windDegToCompass(currentWeather.wind.deg || 0)}
-                </span>
-                <span className="rounded-full px-3 py-1 text-xs" style={{ background: COLORS.elevated, color: COLORS.textSecondary }}>
-                  📊 {(currentWeather.main.pressure * 0.02953).toFixed(2)} inHg
-                </span>
-                <span className="rounded-full px-3 py-1 text-xs" style={{ background: COLORS.elevated, color: COLORS.textSecondary }}>
-                  {moonPhase.phaseEmoji} {Math.round(moonPhase.illumination)}%
-                </span>
+              <div className="relative z-10">
+                <div className="relative inline-block">
+                  <ScoreGauge score={currentScore.totalScore} />
+                </div>
+                <div className="mt-2 text-sm font-medium" style={{ color: currentScore.tier.color }}>
+                  {currentScore.tier.emoji} {currentScore.tier.label} — {currentScore.tier.desc}
+                </div>
+
+                {/* Condition pills */}
+                <div className="flex flex-wrap justify-center gap-2 mt-4">
+                  <span className="rounded-full px-3 py-1 text-xs" style={{ background: `${COLORS.elevated}cc`, color: COLORS.textSecondary }}>
+                    🌡 {Math.round(currentWeather.main.temp)}°F
+                  </span>
+                  <span className="rounded-full px-3 py-1 text-xs" style={{ background: `${COLORS.elevated}cc`, color: COLORS.textSecondary }}>
+                    💨 {Math.round(currentWeather.wind.speed)} mph {windDegToCompass(currentWeather.wind.deg || 0)}
+                  </span>
+                  <span className="rounded-full px-3 py-1 text-xs" style={{ background: `${COLORS.elevated}cc`, color: COLORS.textSecondary }}>
+                    📊 {(currentWeather.main.pressure * 0.02953).toFixed(2)} inHg
+                  </span>
+                  <span className="rounded-full px-3 py-1 text-xs" style={{ background: `${COLORS.elevated}cc`, color: COLORS.textSecondary }}>
+                    {moonPhase.phaseEmoji} {Math.round(moonPhase.illumination)}%
+                  </span>
+                </div>
+              </div>
+
+              {/* Wave bottom */}
+              <div className="absolute bottom-0 left-0 right-0 pointer-events-none wave-animate">
+                <WavePattern opacity={0.12} />
               </div>
             </div>
 
             {/* Card 2: Hourly Timeline */}
-            <div
-              className="rounded-2xl p-4 mb-4"
-              style={{ background: COLORS.card, border: `1px solid ${COLORS.border}` }}
-            >
-              <h3 className="text-sm font-semibold mb-3" style={{ color: COLORS.textPrimary }}>
-                <Clock size={14} className="inline mr-1" />
-                {selectedDayIndex === 0 ? "Today's" : fiveDaySummary[selectedDayIndex]?.dayName + "'s"} Bite Forecast
-              </h3>
-              <HourlyChart hourlyData={hourlyData} solunarPeriods={solunarPeriods} />
-              {hourlyData.length === 0 && (
-                <div className="text-center py-4 text-xs" style={{ color: COLORS.textSecondary }}>
-                  No hourly data available for this period
-                </div>
-              )}
-            </div>
-
-            {/* Card 3: Key Factors */}
-            <div
-              className="rounded-2xl p-4 mb-4"
-              style={{ background: COLORS.card, border: `1px solid ${COLORS.border}` }}
-            >
-              <h3 className="text-sm font-semibold mb-2" style={{ color: COLORS.textPrimary }}>
-                <Target size={14} className="inline mr-1" />
-                Key Factors
-              </h3>
-              <div className="divide-y" style={{ borderColor: COLORS.border }}>
-                {currentScore.factors
-                  .sort((a, b) => b.weight - a.weight)
-                  .map((f, i) => (
-                    <FactorCard key={i} factor={f} />
-                  ))}
-              </div>
-            </div>
-
-            {/* Card 4: 5-Day Outlook */}
-            <div
-              className="rounded-2xl p-4 mb-4"
-              style={{ background: COLORS.card, border: `1px solid ${COLORS.border}` }}
-            >
-              <h3 className="text-sm font-semibold mb-3" style={{ color: COLORS.textPrimary }}>
-                <Calendar size={14} className="inline mr-1" />
-                5-Day Outlook
-              </h3>
-              <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
-                {fiveDaySummary.map((day, i) => (
-                  <DayCard
-                    key={day.dateStr}
-                    day={day}
-                    isSelected={selectedDayIndex === i}
-                    onSelect={() => setSelectedDayIndex(i)}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Card 5: Seasonal Intel */}
-            {spawnPhase && (
-              <div
-                className="rounded-2xl p-4 mb-4"
-                style={{ background: COLORS.card, border: `1px solid ${COLORS.border}` }}
-              >
+            <FishCard>
+              <div className="p-4">
                 <h3 className="text-sm font-semibold mb-3" style={{ color: COLORS.textPrimary }}>
-                  <Waves size={14} className="inline mr-1" />
-                  Seasonal Intel
+                  <Clock size={14} className="inline mr-1" />
+                  {selectedDayIndex === 0 ? "Today's" : fiveDaySummary[selectedDayIndex]?.dayName + "'s"} Bite Forecast
                 </h3>
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className="rounded-full px-3 py-1 text-xs font-semibold"
-                    style={{ background: `${COLORS.accent}22`, color: COLORS.accent }}
-                  >
-                    {spawnPhase.emoji} {spawnPhase.phase}
-                  </span>
-                  <span className="text-xs" style={{ color: COLORS.textSecondary }}>
-                    Est. water temp: ~{waterTemp}°F
-                  </span>
-                </div>
-                <p className="text-sm mb-3" style={{ color: COLORS.textSecondary }}>
-                  {spawnPhase.description}
-                </p>
-                <div
-                  className="rounded-xl p-3 text-sm mb-3"
-                  style={{ background: COLORS.elevated, color: COLORS.textPrimary }}
-                >
-                  🎯 <strong>Tactics:</strong> {spawnPhase.tactics}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {spawnPhase.lures.map(lure => (
-                    <span
-                      key={lure}
-                      className="rounded-full px-3 py-1 text-xs"
-                      style={{ background: COLORS.elevated, color: COLORS.textSecondary }}
-                    >
-                      🎣 {lure}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Condition-based tips */}
-                {conditionTactics.length > 0 && (
-                  <div className="mt-4 space-y-2">
-                    <div className="text-xs font-semibold" style={{ color: COLORS.textPrimary }}>
-                      Current Conditions Tips:
-                    </div>
-                    {conditionTactics.map((tip, i) => (
-                      <div
-                        key={i}
-                        className="rounded-lg p-2.5 text-xs"
-                        style={{ background: COLORS.elevated, color: COLORS.textSecondary }}
-                      >
-                        💡 {tip}
-                      </div>
-                    ))}
+                <HourlyChart hourlyData={hourlyData} solunarPeriods={solunarPeriods} />
+                {hourlyData.length === 0 && (
+                  <div className="text-center py-4 text-xs" style={{ color: COLORS.textSecondary }}>
+                    No hourly data available for this period
                   </div>
                 )}
               </div>
+            </FishCard>
+
+            {/* Card 3: Key Factors */}
+            <FishCard showWaves={false}>
+              <div className="p-4">
+                <h3 className="text-sm font-semibold mb-2" style={{ color: COLORS.textPrimary }}>
+                  <Target size={14} className="inline mr-1" />
+                  Key Factors
+                </h3>
+                <div className="divide-y" style={{ borderColor: COLORS.border }}>
+                  {currentScore.factors
+                    .sort((a, b) => b.weight - a.weight)
+                    .map((f, i) => (
+                      <FactorCard key={i} factor={f} />
+                    ))}
+                </div>
+              </div>
+            </FishCard>
+
+            {/* Card 4: 5-Day Outlook */}
+            <FishCard>
+              <div className="p-4">
+                <h3 className="text-sm font-semibold mb-3" style={{ color: COLORS.textPrimary }}>
+                  <Calendar size={14} className="inline mr-1" />
+                  5-Day Outlook
+                </h3>
+                <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+                  {fiveDaySummary.map((day, i) => (
+                    <DayCard
+                      key={day.dateStr}
+                      day={day}
+                      isSelected={selectedDayIndex === i}
+                      onSelect={() => setSelectedDayIndex(i)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </FishCard>
+
+            {/* Card 5: Seasonal Intel */}
+            {spawnPhase && (
+              <FishCard>
+                <div className="p-4 relative">
+                  {/* Faint bass watermark */}
+                  <div className="absolute bottom-8 right-4 pointer-events-none">
+                    <BassSilhouette width={80} height={48} opacity={0.04} color={COLORS.textPrimary} />
+                  </div>
+                  <h3 className="text-sm font-semibold mb-3" style={{ color: COLORS.textPrimary }}>
+                    <Waves size={14} className="inline mr-1" />
+                    Seasonal Intel
+                  </h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span
+                      className="rounded-full px-3 py-1 text-xs font-semibold"
+                      style={{ background: `${COLORS.accent}22`, color: COLORS.accent }}
+                    >
+                      {spawnPhase.emoji} {spawnPhase.phase}
+                    </span>
+                    <span className="text-xs" style={{ color: COLORS.textSecondary }}>
+                      Est. water temp: ~{waterTemp}°F
+                    </span>
+                  </div>
+                  <p className="text-sm mb-3" style={{ color: COLORS.textSecondary }}>
+                    {spawnPhase.description}
+                  </p>
+                  <div
+                    className="rounded-xl p-3 text-sm mb-3"
+                    style={{ background: COLORS.elevated, color: COLORS.textPrimary }}
+                  >
+                    🎯 <strong>Tactics:</strong> {spawnPhase.tactics}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {spawnPhase.lures.map(lure => (
+                      <span
+                        key={lure}
+                        className="rounded-full px-3 py-1 text-xs"
+                        style={{ background: COLORS.elevated, color: COLORS.textSecondary }}
+                      >
+                        🎣 {lure}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Condition-based tips */}
+                  {conditionTactics.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <div className="text-xs font-semibold" style={{ color: COLORS.textPrimary }}>
+                        Current Conditions Tips:
+                      </div>
+                      {conditionTactics.map((tip, i) => (
+                        <div
+                          key={i}
+                          className="rounded-lg p-2.5 text-xs"
+                          style={{ background: COLORS.elevated, color: COLORS.textSecondary }}
+                        >
+                          💡 {tip}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </FishCard>
             )}
 
             {/* Card 6: Moon & Solunar Detail */}
-            <div
-              className="rounded-2xl p-4 mb-4"
-              style={{ background: COLORS.card, border: `1px solid ${COLORS.border}` }}
-            >
-              <h3 className="text-sm font-semibold mb-3" style={{ color: COLORS.textPrimary }}>
-                <Moon size={14} className="inline mr-1" />
-                Moon & Solunar
-              </h3>
-              <MoonDisplay moonPhase={moonPhase} solunarPeriods={solunarPeriods} />
+            <FishCard>
+              <div className="p-4">
+                <h3 className="text-sm font-semibold mb-3" style={{ color: COLORS.textPrimary }}>
+                  <Moon size={14} className="inline mr-1" />
+                  Moon & Solunar
+                </h3>
+                <MoonDisplay moonPhase={moonPhase} solunarPeriods={solunarPeriods} />
 
-              {solunarPeriods && (
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <div className="rounded-xl p-3" style={{ background: COLORS.elevated }}>
-                    <div className="text-xs font-semibold mb-2" style={{ color: COLORS.accent }}>
-                      Major Periods (2hr)
-                    </div>
-                    {solunarPeriods.majors.map((m, i) => (
-                      <div key={i} className="text-xs mb-1" style={{ color: COLORS.textPrimary }}>
-                        {formatTime(m.start)} – {formatTime(m.end)}
+                {solunarPeriods && (
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="rounded-xl p-3" style={{ background: COLORS.elevated }}>
+                      <div className="text-xs font-semibold mb-2" style={{ color: COLORS.accent }}>
+                        Major Periods (2hr)
                       </div>
-                    ))}
-                  </div>
-                  <div className="rounded-xl p-3" style={{ background: COLORS.elevated }}>
-                    <div className="text-xs font-semibold mb-2" style={{ color: COLORS.textSecondary }}>
-                      Minor Periods (1hr)
+                      {solunarPeriods.majors.map((m, i) => (
+                        <div key={i} className="text-xs mb-1" style={{ color: COLORS.textPrimary }}>
+                          {formatTime(m.start)} – {formatTime(m.end)}
+                        </div>
+                      ))}
                     </div>
-                    {solunarPeriods.minors.map((m, i) => (
-                      <div key={i} className="text-xs mb-1" style={{ color: COLORS.textPrimary }}>
-                        {formatTime(m.start)} – {formatTime(m.end)}
+                    <div className="rounded-xl p-3" style={{ background: COLORS.elevated }}>
+                      <div className="text-xs font-semibold mb-2" style={{ color: COLORS.textSecondary }}>
+                        Minor Periods (1hr)
                       </div>
-                    ))}
+                      {solunarPeriods.minors.map((m, i) => (
+                        <div key={i} className="text-xs mb-1" style={{ color: COLORS.textPrimary }}>
+                          {formatTime(m.start)} – {formatTime(m.end)}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {sunTimes && (
-                <div className="mt-3 flex gap-4 text-xs" style={{ color: COLORS.textSecondary }}>
-                  <span>🌅 Sunrise: {formatTime(sunTimes.sunrise)}</span>
-                  <span>🌇 Sunset: {formatTime(sunTimes.sunset)}</span>
-                </div>
-              )}
-            </div>
+                {sunTimes && (
+                  <div className="mt-3 flex gap-4 text-xs" style={{ color: COLORS.textSecondary }}>
+                    <span>🌅 Sunrise: {formatTime(sunTimes.sunrise)}</span>
+                    <span>🌇 Sunset: {formatTime(sunTimes.sunset)}</span>
+                  </div>
+                )}
+              </div>
+            </FishCard>
           </>
         )}
       </div>
